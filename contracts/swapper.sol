@@ -11,34 +11,41 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract swapper {
 
      address owner;
-     uint256 decimal = 18;
-     AggregatorV3Interface pricefeed;
+     uint256 decimal = 1e18;
+     AggregatorV3Interface private pricefeeddai;
+     AggregatorV3Interface private pricefeedusd;
+     AggregatorV3Interface private pricefeedeth;
+     AggregatorV3Interface private pricefeedbat;
 
-     int256[] currentprice;
+     
 
-     mapping (address => currentprice) name;
+     mapping (address => int) pool;
 
      
     constructor() {
         owner = msg.sender;
-        pricefeed = AggregatorV3Interface(0x694AA1769357215DE4FAC081bf1f309aDC325306);
+        pricefeeddai = AggregatorV3Interface(0x773616E4d11A78F511299002da57A0a94577F1f4);
+        pricefeedeth = AggregatorV3Interface(0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419);
+        pricefeedbat = AggregatorV3Interface(0x0d16d4528239e9ee52fa531af613AcdB23D88c94);
     }
+
+
+       function getLatestPrice (AggregatorV3Interface pricefeed) public view returns (uint80 roundID, int price,uint startedAt,uint timeStamp,
+        uint80 answeredInRound) {
+        (roundID, price,startedAt,timeStamp,answeredInRound) = pricefeed.latestRoundData();
+
+    } 
 
    
 
-        function swap(uint _amount) public {
+        // function swap(uint tokenamount) public {
        
 
-        (, int price, , , ) = priceFeed.latestRoundData();
+        // (, int price, , , ) = priceFeed.latestRoundData();
 
-        uint priceDecimals = uint(price) * (10 ** (token2Decimals - token1Decimals));
-        uint token2Amount = (_amount * priceDecimals) / (10 ** token1Decimals);
+        //  uint token2Amount = (_amount * uint(price)) / (10 ** 18)
 
-        token1.transferFrom(msg.sender, address(this), _amount);
-        token2.transfer(msg.sender, token2Amount);
+        // token1.transferFrom(msg.sender, address(this), token2Amount);
+        // token2.transfer(msg.sender, token2Amount);
     }
 
-
-
-
-}
