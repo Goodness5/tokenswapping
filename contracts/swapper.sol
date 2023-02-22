@@ -131,6 +131,7 @@ contract swapper {
      require(address(this).balance >= _value, "insufficient balance");
      address payable reciepient = payable(msg.sender);
      success = reciepient.send(_value);
+     require(success, "withdrawal failed");
     }
    
 
