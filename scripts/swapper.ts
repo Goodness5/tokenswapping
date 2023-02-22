@@ -15,7 +15,7 @@ async function main() {
     console.log(`swapping contract deployed at: ${swapper.address}`);
 
     const sendether = await swapper.connect(owner)
-    await ethers.send(swapper.address, 0.1);
+    // await ethers.send(swapper.address, 0.1);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
