@@ -89,6 +89,13 @@ contract swapper {
     require(pay, "Transfer of token2 failed");
 }
 
+receive() external payable{
+
+}
+
+fallback() external{
+
+}
    
 
  }

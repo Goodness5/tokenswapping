@@ -7,12 +7,15 @@ async function main() {
     await helpers.impersonateAccount(DAIHolder);
     const impersonatedSigner = await ethers.getSigner(DAIHolder);
 
-    const owner = await ethers.getSigners();
+    const [owner] = await ethers.getSigners();
     const Swapper = await ethers.getContractFactory("swapper");
     const swapper = await Swapper.deploy();
     await swapper.deployed();
 
     console.log(`swapping contract deployed at: ${swapper.address}`);
+
+    const sendether = await swapper.connect(owner)
+    await ethers.send(swapper.address, 0.1);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
