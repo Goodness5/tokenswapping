@@ -44,35 +44,41 @@ contract swapper {
     } 
 
 
-    function swapDaiToBat(uint256 _amounttoswap) public {
+    function swapDaiToBat(uint256 _amounttoswap) public returns(bool swapped){
         (, int daiPrice, , , ) = getLatestPrice(pricefeeddai);
         (, int ethPrice, , , ) = getLatestPrice(pricefeedbat);
         uint256 daiPriceInUsd = uint256(daiPrice);
         uint256 ethPriceInUsd = uint256(ethPrice);
         uint256 daiPriceInEth = daiPriceInUsd * decimal / ethPriceInUsd;
         uint256 amountToReceive = _amounttoswap * daiPriceInEth / decimal;
+        bool success = token1.approve(address(this), _amounttoswap);
         bool deduct = token1.transferFrom(msg.sender, address(this), _amounttoswap);
         bool pay =  token2.transfer(msg.sender, amountToReceive);
         require(deduct, "Transfer of token1 failed");
         require(pay, "Transfer of token2 failed");
+        require(success, "Approval of Dai failed");
+        swapped = true;
     }
 
 
 
-    function swapBatToDai(uint256 _amounttoswap) public {
+    function swapBatToDai(uint256 _amounttoswap) public returns(bool swapped){
         (, int daiPrice, , , ) = getLatestPrice(pricefeeddai);
-        (, int ethPrice, , , ) = getLatestPrice(pricefeedbat);
-        uint256 ethPriceInUsd = uint256(ethPrice);
+        (, int batPrice, , , ) = getLatestPrice(pricefeedbat);
+        uint256 batPriceInUsd = uint256(batPrice);
         uint256 daiPriceInUsd = uint256(daiPrice);
-        uint256 daiPriceInEth = ethPriceInUsd * decimal / daiPriceInUsd;
-        uint256 amountToReceive = _amounttoswap * daiPriceInEth / decimal;
+        uint256 daiPriceInbat = batPriceInUsd * decimal / daiPriceInUsd;
+        uint256 amountToReceive = _amounttoswap * daiPriceInbat / decimal;
+        bool success = token1.approve(address(this), _amounttoswap);
         bool deduct = token2.transferFrom(msg.sender, address(this), _amounttoswap);
         bool pay =  token1.transfer(msg.sender, amountToReceive);
         require(deduct, "Transfer of token1 failed");
         require(pay, "Transfer of token2 failed");
+        require(success, "Approval of Bat failed");
+        swapped = true;
     }
 
-    function swapEthToBat(uint256 _amounttoswap) public payable {
+    function swapEthToBat(uint256 _amounttoswap) public payable returns(bool swapped){
         (, int batPrice, , , ) = getLatestPrice(pricefeedbat);
         (, int ethPrice, , , ) = getLatestPrice(pricefeedeth);
         uint256 ethPriceInUsd = uint256(ethPrice);
@@ -85,16 +91,17 @@ contract swapper {
             bool pay = token1.transferFrom(msg.sender, address(this), amountToReceive);
         require(deduct, "Transfer of token1 failed");
         require(pay, "Transfer of token2 failed");
+        swapped = true;
     }
 
-    function swapBatToEth(uint256 _amounttoswap) public {
+    function swapBatToEth(uint256 _amounttoswap) public returns(bool swapped){
         (, int batPrice, , , ) = getLatestPrice(pricefeedbat);
         (, int ethPrice, , , ) = getLatestPrice(pricefeedeth);
         uint256 batPriceInUsd = uint256(batPrice);
         uint256 ethPriceInUsd = uint256(ethPrice);
         uint256 batPriceInEth = batPriceInUsd * decimal / ethPriceInUsd;
         uint256 amountToReceive = _amounttoswap * batPriceInEth / decimal;
-        bool success = token1.approve(address(this), 100);
+        bool success = token1.approve(address(this), _amounttoswap);
         bool deduct = token1.transferFrom(msg.sender, address(this), _amounttoswap);
         address payable recipient = payable(msg.sender);
         bool pay = false;
@@ -102,6 +109,7 @@ contract swapper {
         require(success, "Approval of token1 failed");
         require(deduct, "Transfer of token1 failed");
         require(pay, "Transfer of eth failed");
+        swapped = true;
     }
 
 
