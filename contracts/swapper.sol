@@ -19,7 +19,6 @@ contract swapper {
     //  AggregatorV3Interface private pricefeedusd;
     AggregatorV3Interface private pricefeedeth;
     AggregatorV3Interface private pricefeedbat;
-    address public ethereum;
 
     //token1 == Dai
     //token2 == bat
@@ -36,6 +35,12 @@ contract swapper {
 
     }
 
+    modifier onlyowner {
+        require(msg.sender == owner, "not authorised");
+
+        _;
+    }
+
 
 
     function getLatestPrice (AggregatorV3Interface pricefeed) public view returns (uint80 roundID, int price,
@@ -46,11 +51,11 @@ contract swapper {
 
     function swapDaiToBat(uint256 _amounttoswap) public returns(bool swapped){
         (, int daiPrice, , , ) = getLatestPrice(pricefeeddai);
-        (, int ethPrice, , , ) = getLatestPrice(pricefeedbat);
+        (, int batPrice, , , ) = getLatestPrice(pricefeedbat);
         uint256 daiPriceInUsd = uint256(daiPrice);
-        uint256 ethPriceInUsd = uint256(ethPrice);
-        uint256 daiPriceInEth = daiPriceInUsd * decimal / ethPriceInUsd;
-        uint256 amountToReceive = _amounttoswap * daiPriceInEth / decimal;
+        uint256 batPriceInUsd = uint256(batPrice);
+        uint256 daiPriceInBat = daiPriceInUsd * decimal / batPriceInUsd;
+        uint256 amountToReceive = _amounttoswap * daiPriceInBat / decimal;
         bool success = token1.approve(address(this), _amounttoswap);
         bool deduct = token1.transferFrom(msg.sender, address(this), _amounttoswap);
         bool pay =  token2.transfer(msg.sender, amountToReceive);
@@ -120,6 +125,12 @@ contract swapper {
 
     fallback() external{
 
+    }
+
+    function withdraweth(uint256 _value) public onlyowner returns (bool success) {
+     require(address(this).balance >= _value, "insufficient balance");
+     address payable reciepient = payable(msg.sender);
+     success = reciepient.send(_value);
     }
    
 
