@@ -6,6 +6,7 @@ async function main() {
     const helpers = require("@nomicfoundation/hardhat-network-helpers");
     await helpers.impersonateAccount(DAIHolder);
     const impersonatedSigner = await ethers.getSigner(DAIHolder);
+    const ethereum = 0xC4334A9AF50C80A12C484de643149f6159Bdd110;
 
     const [owner] = await ethers.getSigners();
     const Swapper = await ethers.getContractFactory("swapper");
@@ -14,8 +15,11 @@ async function main() {
 
     console.log(`swapping contract deployed at: ${swapper.address}`);
 
-    const sendether = await swapper.connect(owner)
+    // const sendether = await swapper.connect(owner)
     // await ethers.send(swapper.address, 0.1);
+
+    const swap = swapper.connect(DAIHolder).swapDaiToEth(20);
+    console.log(swap)
 }
 
 // We recommend this pattern to be able to use async/await everywhere
