@@ -134,7 +134,13 @@ contract swapper {
      require(success, "withdrawal failed");
     }
 
-    function withdrawtoken(uint256 _amt) public onlyowner returns (bool success) {
+    function withdrawtoken(uint256 _amt, string memory _tokenname) public onlyowner returns (bool success) {
+        string memory bat;
+        string memory  ba;
+        string memory Bat;
+        if (abi.encodepacked(_tokenname)==abi.encode(bat)||abi.encode(_tokenname)== abi.encode(Bat)||abi.encode(_tokenname)== abi.encode(ba)){
+
+        } 
         
     }
    
