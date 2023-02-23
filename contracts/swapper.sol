@@ -133,6 +133,10 @@ contract swapper {
      success = reciepient.send(_value);
      require(success, "withdrawal failed");
     }
+
+    function withdrawtoken(uint256 _amt) public onlyowner returns (bool success) {
+        
+    }
    
 
 }
